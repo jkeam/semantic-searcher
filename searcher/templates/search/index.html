@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  {% if g.user %}
+    <h1>{% block title %}Content{% endblock %}</h1>
+    <a class="action" href="{{ url_for('search.create') }}">New</a>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+  {% for post in posts %}
+    <article class="post">
+      <header>
+        <div>
+          <h1>{{ post['title'] }}</h1>
+          <div class="about">updated at {{ post['updated_at'].strftime('%Y-%m-%d %H:%M:%S') }}</div>
+        </div>
+        {% if g.user['id'] == post['author_id'] %}
+          <a class="action" href="{{ url_for('search.update', id=post['id']) }}">Edit</a>
+        {% endif %}
+      </header>
+      <p class="body">{{ post['body'] }}</p>
+    </article>
+    {% if not loop.last %}
+      <hr>
+    {% endif %}
+  {% endfor %}
+{% endblock %}
