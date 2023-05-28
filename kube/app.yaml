@@ -1,0 +1,90 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: semantic-searcher
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: semantic-searcher-app
+  namespace: semantic-searcher
+  labels:
+    app: semantic-searcher-app
+    app.kubernetes.io/name: semantic-searcher-app
+    app.kubernetes.io/component: app
+    app.kubernetes.io/part-of: "semantic-searcher"
+    app.kubernetes.io/version: "1.0.0"
+    app.openshift.io/runtime: python
+    app.openshift.io/runtime-version: "v3"
+  annotations:
+    app.openshift.io/vcs-uri: "https://github.com/jkeam/semantic-searcher.git"
+    app.openshift.io/vcs-ref: "main"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: semantic-searcher-app
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: semantic-searcher-app
+    spec:
+      containers:
+        - image: quay.io/jkeam/semantic-searcher:latest
+          name: semantic-searcher-app
+          ports:
+          - containerPort: 5000
+            name: theport
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop:
+              - ALL
+      restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: semantic-searcher-app
+  namespace: semantic-searcher
+  labels:
+    app: semantic-searcher-app
+spec:
+  ports:
+    - name: port5000
+      port: 5000
+      targetPort: 5000
+  selector:
+    app: semantic-searcher-app
+
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: semantic-searcher-app
+  namespace: semantic-searcher
+  labels:
+    app: semantic-searcher-app
+spec:
+  path: /
+  to:
+    kind: Service
+    name: semantic-searcher-app
+    weight: 100
+  port:
+    targetPort: port5000
