@@ -1,0 +1,17 @@
+[project]
+name = "semantic-searcher"
+version = "1.0.0"
+dependencies = [
+    "flask",
+    "langchain",
+    "openai",
+    "chromadb",
+    "unstructured",
+    "evaluate",
+    "bert_score",
+    "tiktoken"
+]
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
