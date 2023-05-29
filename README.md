@@ -2,7 +2,7 @@
 
 ## Prerequisite
 
-1. Python 3.11
+1. Python 3.10
 
 ## Setup
 
