@@ -4,6 +4,8 @@ from flask import (
 from datetime import datetime
 from uuid import uuid4
 from werkzeug.exceptions import abort
+from searcher.models import Searcher
+from os import getenv
 
 from searcher.auth import login_required
 
@@ -11,6 +13,7 @@ bp = Blueprint('search', __name__)
 
 post_id_to_post = {}
 
+searcher = Searcher(getenv('OPENAI_API_KEY'))
 
 @bp.route('/')
 def index():
@@ -88,3 +91,23 @@ def delete(id):
         del post_id_to_post[id]
 
     return redirect(url_for('search.index'))
+
+
+@bp.route('/train', methods=('POST',))
+@login_required
+def train():
+    searcher.train(post_id_to_post.values())
+    flash('Trained!')
+    return redirect(url_for('search.index'))
+
+
+@bp.route('/query', methods=('GET', 'POST'))
+@login_required
+def query():
+    answer = None
+    if request.method == 'POST':
+        query = request.form['query']
+        answer = searcher.ask(query)
+        return render_template('search/query.html', query=query, answer=answer)
+
+    return render_template('search/query.html', answer=None)

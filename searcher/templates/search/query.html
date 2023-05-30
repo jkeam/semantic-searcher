@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Query {% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  <form method="post">
+    <label for="query">Query</label>
+    <input name="query" id="query" value="{{ request.form['query'] or query }}" required>
+    <input class="info" type="submit" value="Query">
+  </form>
+
+  {% if answer is not none %}
+  <h2>Answer</h2>
+  <p class="answer">
+    {{ answer }}
+  </p>
+  {% endif %}
+{% endblock %}

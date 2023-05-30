@@ -5,7 +5,8 @@
   <h1>Semantic Searcher</h1>
   <ul>
     {% if g.user %}
-      <li><span>{{ g.user['username'] }}</span>
+      <li><a href="{{ url_for('search.index') }}">Content</a>
+      <li><a href="{{ url_for('search.query') }}">Query</a>
       <li><a href="{{ url_for('auth.logout') }}">Log Out</a>
     {% else %}
       <li><a href="{{ url_for('auth.login') }}">Log In</a>

@@ -25,4 +25,10 @@
       <hr>
     {% endif %}
   {% endfor %}
+
+  {% if posts|length > 0 %}
+  <form method="post" action="{{ url_for('search.train') }}">
+    <input class="info" type="submit" value="Train">
+  </form>
+  {% endif %}
 {% endblock %}
