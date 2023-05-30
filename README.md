@@ -13,7 +13,12 @@
     pip install -r requirements.txt
     ```
 
-2. Set `OPENAI_API_KEY` and `APP_PASSWORD` env var
+2. Set `OPENAI_API_KEY` and `APP_PASSWORD` and `FLASK_SECRET_KEY` and optionally `PORT` env vars
+
+    ```shell
+    # use this for your FLASK_SECRET_KEY
+    python -c 'import secrets; print(secrets.token_hex())'
+    ```
 
 ## Running
 
