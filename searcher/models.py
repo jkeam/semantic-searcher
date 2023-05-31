@@ -19,7 +19,7 @@ class Searcher:
         doc_str = "\n\n".join(list(map(lambda p: p['body'], posts)))
 
         # write string
-        filename = 'data.txt'
+        filename = '/tmp/data.txt'
         with open(filename, 'w') as f:
             f.write(doc_str)
         self._docsearch = self._generate_index(filename)
