@@ -39,12 +39,10 @@ class Searcher:
         texts = text_splitter.split_documents(documents)
         embeddings = OpenAIEmbeddings()
 
-        # persist
-        # docsearch = Chroma.from_documents(texts, embeddings, persist_directory='../data/interim')
-        #docsearch.persist()
-
-        # don't persist
-        return Chroma.from_documents(texts, embeddings)
+        # chromadb
+        docsearch = Chroma.from_documents(texts, embeddings, '/tmp/chroma')
+        docsearch.persist()
+        return docsearch
 
 
     def _answer_question(self, query:str, index:Chroma, chain) -> str:
