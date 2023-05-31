@@ -18,7 +18,6 @@ USER nobody
 
 # Copy code and set env var
 COPY searcher ./searcher
-COPY .chroma ./.chroma
 ENV PORT 5000
 
 # Run the web service on container startup. Here we use the gunicorn
