@@ -40,7 +40,7 @@ class Searcher:
         embeddings = OpenAIEmbeddings()
 
         # chromadb
-        docsearch = Chroma.from_documents(texts, embeddings, '/tmp/chroma')
+        docsearch = Chroma.from_documents(documents=texts, embeddings=embeddings, persist_directory='/tmp/chroma')
         docsearch.persist()
         return docsearch
 
