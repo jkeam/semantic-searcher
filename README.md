@@ -25,3 +25,9 @@
 ```shell
 flask --app searcher
 ```
+
+## Deployment
+
+1. Update `env` in `kube/app.yaml`
+2. Update ingress/route in `kube/app.yaml` to match your specific environment
+3. Deploy using a kubernetes environment
