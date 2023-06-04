@@ -7,7 +7,7 @@ USER root
 RUN dnf -y install httpd
 
 # Copy only requirements.txt
-ENV APP_HOME /app
+ENV APP_HOME /opt/app-root/src
 WORKDIR $APP_HOME
 COPY requirements.txt ./
 
