@@ -4,6 +4,7 @@ from langchain.vectorstores import Chroma
 from langchain.chains.question_answering import load_qa_chain
 from langchain.llms import OpenAI
 from langchain.document_loaders import TextLoader
+from shutil import rmtree
 
 class Searcher:
     def __init__(self, openai_api_key):
@@ -40,7 +41,9 @@ class Searcher:
         embeddings = OpenAIEmbeddings()
 
         # chromadb
-        docsearch = Chroma.from_documents(documents=texts, embeddings=embeddings, persist_directory='/tmp/chroma')
+        chroma_dir = '/tmp/chroma'
+        rmtree(chroma_dir, ignore_errors=True)
+        docsearch = Chroma.from_documents(documents=texts, embeddings=embeddings, persist_directory=chroma_dir)
         docsearch.persist()
         return docsearch
 
