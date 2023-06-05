@@ -31,3 +31,9 @@ flask --app searcher
 1. Update `env` in `kube/app.yaml`
 2. Update ingress/route in `kube/app.yaml` to match your specific environment
 3. Deploy using a kubernetes environment
+
+
+## Links
+
+1. [Based off of](https://github.com/redhat-et/foundation-models-for-documentation/blob/master/notebooks/langchain-openai.ipynb)
+2. [Chroma DB](https://python.langchain.com/en/latest/modules/indexes/vectorstores/examples/chroma.html)
