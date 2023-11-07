@@ -1,5 +1,6 @@
 from langchain.embeddings.openai import OpenAIEmbeddings
-from langchain.text_splitter import MarkdownTextSplitter
+from langchain.text_splitter import CharacterTextSplitter
+from langchain.schema import Document
 from langchain.vectorstores import Chroma
 from langchain.chains.question_answering import load_qa_chain
 from langchain.chains.combine_documents.base import BaseCombineDocumentsChain
@@ -19,33 +20,21 @@ class Searcher:
         Train the model
         """
         doc_str = "\n\n".join(list(map(lambda p: p['body'], posts)))
-
-        # write string
-        filename = '/tmp/data.txt'
-        with open(filename, 'w') as f:
-            f.write(doc_str)
-        self._docsearch = self._generate_index(filename)
+        self._docsearch = self._generate_index(doc_str)
 
 
-    def _generate_index(self, path:str) -> Chroma:
+    def _generate_index(self, text:str) -> Chroma:
         """
         Index the document and return the indexed db
         """
-        # chromadb
-        loader = TextLoader(path)
-
-        # loader = DirectoryLoader('../data/external', glob="**/*.md", loader_cls=TextLoader)
-        documents = loader.load()
-
-        text_splitter = MarkdownTextSplitter(chunk_size=1000, chunk_overlap=0)
-
-        texts = text_splitter.split_documents(documents)
+        text_splitter = CharacterTextSplitter(chunk_size=500, chunk_overlap=100)
+        documents = [Document(page_content=x) for x in text_splitter.split_text(text)]
         embeddings = OpenAIEmbeddings()
 
         # chromadb
         chroma_dir = '/tmp/chroma'
         rmtree(chroma_dir, ignore_errors=True)
-        docsearch = Chroma.from_documents(documents=texts, embeddings=embeddings, persist_directory=chroma_dir)
+        docsearch = Chroma.from_documents(documents=documents, embeddings=embeddings, persist_directory=chroma_dir)
         docsearch.persist()
         return docsearch
 

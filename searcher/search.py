@@ -5,13 +5,15 @@ from datetime import datetime
 from uuid import uuid4
 from werkzeug.exceptions import abort
 from searcher.models import Searcher
-from os import getenv
+from os import getenv, environ
 
 from searcher.auth import login_required
 
 bp = Blueprint('search', __name__)
 
 post_id_to_post = {}
+
+environ['TOKENIZERS_PARALLELISM'] = 'false'
 
 searcher = Searcher(getenv('OPENAI_API_KEY'))
 
