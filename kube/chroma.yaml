@@ -2,12 +2,12 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: semantic-searcher-app
+  name: semantic-searcher-chroma
   namespace: semantic-searcher
   labels:
-    app: semantic-searcher-app
-    app.kubernetes.io/name: semantic-searcher-app
-    app.kubernetes.io/component: app
+    app: semantic-searcher-chroma
+    app.kubernetes.io/name: semantic-searcher-chroma
+    app.kubernetes.io/component: chroma
     app.kubernetes.io/part-of: "semantic-searcher"
     app.kubernetes.io/version: "1.0.0"
     app.openshift.io/runtime: python
@@ -19,27 +19,20 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: semantic-searcher-app
+      app: semantic-searcher-chroma
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: semantic-searcher-app
+        app: semantic-searcher-chroma
     spec:
       containers:
-        - image: quay.io/jkeam/semantic-searcher:latest
+        - image: quay.io/jkeam/chroma:latest
           imagePullPolicy: Always
-          name: semantic-searcher-app
-          env:
-          - name: OPENAI_API_KEY
-            value: "sk-replaceme"
-          - name: APP_PASSWORD
-            value: "replaceme"
-          - name: FLASK_SECRET_KEY
-            value: "replacemealso"
+          name: semantic-searcher-chroma
           ports:
-          - containerPort: 5000
+          - containerPort: 8000
             name: theport
           resources:
             requests:
@@ -62,32 +55,15 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: semantic-searcher-app
+  name: semantic-searcher-chroma
   namespace: semantic-searcher
   labels:
-    app: semantic-searcher-app
+    app: semantic-searcher-chroma
 spec:
   ports:
-    - name: port5000
-      port: 5000
-      targetPort: 5000
+    - name: port8000
+      port: 8000
+      targetPort: 8000
   type: ClusterIP
   selector:
-    app: semantic-searcher-app
-
----
-apiVersion: route.openshift.io/v1
-kind: Route
-metadata:
-  name: semantic-searcher-app
-  namespace: semantic-searcher
-  labels:
-    app: semantic-searcher-app
-spec:
-  path: /
-  to:
-    kind: Service
-    name: semantic-searcher-app
-    weight: 100
-  port:
-    targetPort: port5000
+    app: semantic-searcher-chroma
