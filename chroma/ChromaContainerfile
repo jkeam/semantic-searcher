@@ -1,6 +1,8 @@
 FROM docker.io/chromadb/chroma:0.4.15
 USER root
 
+RUN pip install --upgrade pip
+
 RUN useradd -m nonroot
 RUN chgrp -R 0 /chroma && \
     chmod -R g=u /chroma && \
