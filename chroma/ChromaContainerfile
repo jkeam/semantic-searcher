@@ -1,0 +1,14 @@
+FROM docker.io/chromadb/chroma:0.4.15
+USER root
+
+RUN useradd -m nonroot
+RUN chgrp -R 0 /chroma && \
+    chmod -R g=u /chroma && \
+    chown -R nonroot:0 /chroma && \
+    mkdir /.local && \
+    chgrp -R 0 /.local && \
+    chmod -R g=u /.local && \
+    chown -R nonroot:0 /.local
+
+USER nonroot
+CMD ["/docker_entrypoint.sh"]
