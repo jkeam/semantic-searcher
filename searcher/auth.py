@@ -14,7 +14,6 @@ password = getenv('APP_PASSWORD')
 @bp.route('/login', methods=('GET', 'POST'))
 def login():
     if request.method == 'POST':
-        print(password)
         form_username = request.form['username']
         form_password = request.form['password']
         if form_username == user['username'] and form_password == password:
