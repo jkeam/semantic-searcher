@@ -90,6 +90,8 @@ metadata:
   labels:
     app: semantic-searcher-app
 spec:
+  tls:
+    termination: edge
   path: /
   to:
     kind: Service
