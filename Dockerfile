@@ -1,10 +1,18 @@
-FROM registry.access.redhat.com/ubi9/python-39@sha256:40a58935b9c22664927b22bf256f53a3d744ddb7316f3af18061099e199526ee
+FROM registry.access.redhat.com/ubi9/python-39@sha256:c7a34a3cb7833ca587c841f7c1716f0d9964ab6af76b69cf2831c90faf7697f1
 
 # Allow statements and log messages to immediately appear in the Knative logs
 ENV PYTHONUNBUFFERED True
 
 USER root
 RUN dnf -y install httpd
+
+# Upgrade sqlite3
+RUN wget https://www.sqlite.org/2023/sqlite-autoconf-3410200.tar.gz && \
+    tar xvfz sqlite-autoconf-*.tar.gz && \
+    cd sqlite-autoconf-3410200 && \
+    ./configure --prefix=/usr && \
+    make -j 1 && \
+    make install
 
 # Copy only requirements.txt
 ENV APP_HOME /opt/app-root/src
