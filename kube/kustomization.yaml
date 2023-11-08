@@ -16,7 +16,7 @@ configMapGenerator:
   - OPENAI_MODEL_NAME=text-embedding-ada-002
 
 commonLabels:
-  app: semantic-searcher
+  app-project: semantic-searcher
 
 resources:
   - chroma.yaml
