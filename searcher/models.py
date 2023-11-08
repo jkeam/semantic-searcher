@@ -39,7 +39,9 @@ class Searcher:
         text_splitter = CharacterTextSplitter(chunk_size=500, chunk_overlap=100)
         documents = text_splitter.split_text(text)
 
+        self._dbclient.get_or_create_collection(name=self._collection_name)
         self._dbclient.delete_collection(name=self._collection_name)
+
         collection = self._dbclient.create_collection(name=self._collection_name, embedding_function=self._embedding_function)
         collection.add(documents=documents, ids=list(map(lambda num: str(num), range(len(documents)))))
         return collection
