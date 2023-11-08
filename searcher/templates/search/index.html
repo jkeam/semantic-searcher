@@ -1,34 +1,57 @@
 {% extends 'base.html' %}
-
+{% block title %}Content{% endblock %}
 {% block header %}
   {% if g.user %}
-    <h1>{% block title %}Content{% endblock %}</h1>
-    <a class="action" href="{{ url_for('search.create') }}">New</a>
+    <header>
+      <section class="hero">
+        <div class="hero-body">
+          <p class="title">
+            Content
+          </p>
+          <p class="subtitle">
+            Listing
+          </p>
+        </div>
+      </section>
+    </header>
   {% endif %}
 {% endblock %}
 
 {% block content %}
+  <div class="level-right">
+    <a class="button is-light" href="{{ url_for('search.create') }}">New</a>
+  </div>
   {% for post in posts %}
-    <article class="post">
-      <header>
-        <div>
-          <h1>{{ post['title'] }}</h1>
-          <div class="about">updated at {{ post['updated_at'].strftime('%Y-%m-%d %H:%M:%S') }}</div>
+    <div class="card">
+      <div class="card-content">
+        <div class="media">
+          <div class="media-content">
+            <p class="title is-4">{{ post['title'] }}</p>
+            <p class="subtitle is-6">
+            {% if g.user['id'] == post['author_id'] %}
+              <a class="action" href="{{ url_for('search.update', id=post['id']) }}">Edit</a>
+            {% endif %}
+            </p>
+          </div>
         </div>
-        {% if g.user['id'] == post['author_id'] %}
-          <a class="action" href="{{ url_for('search.update', id=post['id']) }}">Edit</a>
-        {% endif %}
-      </header>
-      <p class="body">{{ post['body'] }}</p>
-    </article>
-    {% if not loop.last %}
-      <hr>
-    {% endif %}
+
+        <div class="content">
+          {{ post['body'] }}
+          <br/>
+          <br/>
+          updated at <time datetime="2016-1-1">{{ post['updated_at'].strftime('%Y-%m-%d %H:%M:%S') }}</time>
+        </div>
+      </div>
+    </div>
   {% endfor %}
 
   {% if posts|length > 0 %}
   <form method="post" action="{{ url_for('search.train') }}">
-    <input class="info" type="submit" value="Train">
+    {% if posts|length == 1 %}
+      <button class="button is-info" type="submit">Train</button>
+    {% else %}
+      <button class="button is-info" type="submit">Train All</button>
+    {% endif %}
   </form>
   {% endif %}
 {% endblock %}

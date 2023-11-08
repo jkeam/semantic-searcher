@@ -19,10 +19,9 @@ searcher = Searcher(getenv('OPENAI_API_KEY'), getenv('OPENAI_MODEL_NAME'), geten
 
 @bp.route('/')
 def index():
-    if g.user is not None and g.user['id'] is not None:
-        posts = post_id_to_post.values()
-    else:
-        posts = []
+    if g.user is None or g.user['id'] is None:
+        return redirect(url_for('auth.login'))
+    posts = post_id_to_post.values()
     return render_template('search/index.html', posts=posts)
 
 

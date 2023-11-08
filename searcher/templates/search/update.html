@@ -1,20 +1,49 @@
 {% extends 'base.html' %}
-
+{% block title %}Edit "{{ post['title'] }}"{% endblock %}
 {% block header %}
-  <h1>{% block title %}Edit "{{ post['title'] }}"{% endblock %}</h1>
+  <header>
+    <section class="hero">
+      <div class="hero-body">
+        <p class="title">
+          Content
+        </p>
+        <p class="subtitle">
+          Edit
+        </p>
+      </div>
+    </section>
+  </header>
 {% endblock %}
 
 {% block content %}
   <form method="post">
-    <label for="title">Title</label>
-    <input name="title" id="title"
-      value="{{ request.form['title'] or post['title'] }}" required>
-    <label for="body">Body</label>
-    <textarea name="body" id="body">{{ request.form['body'] or post['body'] }}</textarea>
-    <input type="submit" value="Save">
+    <div class="field">
+      <label class="label">Title</label>
+      <div class="control">
+        <input class="input" type="text" name="title" id="title" value="{{ request.form['title'] or post['title'] }}" required>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="label">Body</label>
+      <div class="control">
+        <textarea class="textarea" name="body" id="body" required>{{ request.form['body'] or post['body'] }}</textarea>
+      </div>
+    </div>
+
+    <div class="field is-grouped">
+      <div class="control">
+        <button type="submit" class="button is-link">Submit</button>
+      </div>
+      <div class="control">
+        <a href="{{ url_for('search.index') }}" class="button is-link is-light">Cancel</a>
+      </div>
+    </div>
   </form>
   <hr>
   <form action="{{ url_for('search.delete', id=post['id']) }}" method="post">
-    <input class="danger" type="submit" value="Delete" onclick="return confirm('Are you sure?');">
+    <div class="level-right">
+      <button class="button is-danger" type="submit" onclick="return confirm('Are you sure?');">Delete</button>
+    </div>
   </form>
 {% endblock %}

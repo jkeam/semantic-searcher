@@ -1,17 +1,38 @@
 {% extends 'base.html' %}
-
+{% block title %}Query {% endblock %}
 {% block header %}
-  <h1>{% block title %}Query {% endblock %}</h1>
+  <header>
+    <section class="hero">
+      <div class="hero-body">
+        <p class="title">
+          Query
+        </p>
+      </div>
+    </section>
+  </header>
 {% endblock %}
 
 {% block content %}
   <form method="post">
-    <label for="query">Query</label>
-    <input name="query" id="query" value="{{ request.form['query'] or query }}" required>
-    <input class="info" type="submit" value="Query">
+    <div class="field">
+      <label class="label">Ask your question</label>
+      <div class="control">
+        <input class="input" type="text" name="query" id="query" value="{{ request.form['query'] or query }}" required>
+      </div>
+    </div>
+
+    <div class="field is-grouped">
+      <div class="control">
+        <button type="submit" class="button is-link">Ask</button>
+      </div>
+      <div class="control">
+        <a href="{{ url_for('search.index') }}" class="button is-link is-light">Cancel</a>
+      </div>
+    </div>
   </form>
 
   {% if answer is not none %}
+  <hr />
   <h2>Answer</h2>
   <p class="answer">
     {{ answer }}
