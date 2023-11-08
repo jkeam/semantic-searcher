@@ -7,12 +7,21 @@ from langchain.chains.combine_documents.base import BaseCombineDocumentsChain
 from langchain.llms import OpenAI
 from langchain.document_loaders import TextLoader
 from shutil import rmtree
+from chromadb import HttpClient
+from chromadb.api.models.Collection import Collection
+from chromadb.utils.embedding_functions import OpenAIEmbeddingFunction
 
 class Searcher:
-    def __init__(self, openai_api_key):
+    def __init__(self, openai_api_key:str, open_ai_model_name:str, chroma_host:str, chroma_port:int):
         openai:OpenAI = OpenAI(temperature=0, openai_api_key=openai_api_key)
         self._chain:BaseCombineDocumentsChain = load_qa_chain(openai, chain_type='stuff')
-        self._docsearch:Chroma|None = None
+        self._dbclient = HttpClient(host=chroma_host, port=chroma_port)
+        self._collection:Collection|None = None
+        self._collection_name = "chroma"
+        self._embedding_function = OpenAIEmbeddingFunction(
+            api_key=openai_api_key,
+            model_name=open_ai_model_name
+        )
 
 
     def train(self, posts):
@@ -20,37 +29,28 @@ class Searcher:
         Train the model
         """
         doc_str = "\n\n".join(list(map(lambda p: p['body'], posts)))
-        self._docsearch = self._generate_index(doc_str)
+        self._collection = self._generate_index(doc_str)
 
 
-    def _generate_index(self, text:str) -> Chroma:
+    def _generate_index(self, text:str) -> Collection:
         """
         Index the document and return the indexed db
         """
         text_splitter = CharacterTextSplitter(chunk_size=500, chunk_overlap=100)
-        documents = [Document(page_content=x) for x in text_splitter.split_text(text)]
-        embeddings = OpenAIEmbeddings()
+        documents = text_splitter.split_text(text)
 
-        # chromadb
-        chroma_dir = '/tmp/chroma'
-        rmtree(chroma_dir, ignore_errors=True)
-        docsearch = Chroma.from_documents(documents=documents, embeddings=embeddings, persist_directory=chroma_dir)
-        docsearch.persist()
-        return docsearch
+        self._dbclient.delete_collection(name=self._collection_name)
+        collection = self._dbclient.create_collection(name=self._collection_name, embedding_function=self._embedding_function)
+        collection.add(documents=documents, ids=list(map(lambda num: str(num), range(len(documents)))))
+        return collection
 
 
-    def _answer_question(self, query:str, index:Chroma, chain:BaseCombineDocumentsChain) -> str:
+    def _answer_question(self, query:str, collection:Collection, chain:BaseCombineDocumentsChain) -> str:
         """
         Takes in query, index to search from, and llm chain to generate answer
         """
-        ## Retrieve docs
-        docs = index.similarity_search(query)
-        # print(docs[0].page_content)  # get content
-
-        # return answer
-        # return chain.run(input_documents=docs, question=query)
-
-        # get back model and return output text
+        query_db = Chroma(client=self._dbclient, collection_name=self._collection_name, embedding_function=OpenAIEmbeddings())
+        docs = query_db.similarity_search(query)
         answer:dict[str, str] = chain({'input_documents': docs, 'question': query}, return_only_outputs=True)
         return answer['output_text']
 
@@ -59,7 +59,7 @@ class Searcher:
         """
         Ask the model a query
         """
-        if self._docsearch is None:
+        if self._collection is None:
             return 'You must train the model first. Go back to the content page and train.'
         else:
-            return self._answer_question(query, self._docsearch, self._chain)
+            return self._answer_question(query, self._collection, self._chain)

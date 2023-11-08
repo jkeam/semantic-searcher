@@ -38,6 +38,12 @@ spec:
             value: "replaceme"
           - name: FLASK_SECRET_KEY
             value: "replacemealso"
+          - name: OPENAI_MODEL_NAME
+            value: "text-embedding-ada-002"
+          - name: CHROMA_HOST
+            value: "semantic-searcher-chroma.semantic-searcher.svc.cluster.local"
+          - name: CHROMA_PORT
+            value: "8000"
           ports:
           - containerPort: 5000
             name: theport

@@ -13,7 +13,7 @@
     pip install -r requirements.txt
     ```
 
-2. Set `OPENAI_API_KEY` and `APP_PASSWORD` and `FLASK_SECRET_KEY` and optionally `PORT` env vars
+2. Set `OPENAI_API_KEY` and `APP_PASSWORD` and `FLASK_SECRET_KEY` and `CHROMA_HOST`, and `CHROMA_PORT`, and optionally `PORT` and `OPENAPI_MODEL_NAME` env vars
 
     ```shell
     # use this for your FLASK_SECRET_KEY
@@ -23,14 +23,16 @@
 ## Running
 
 ```shell
+# remember to export `OPENAI_API_KEY` and `APP_PASSWORD` and `FLASK_SECRET_KEY` and `CHROMA_HOST`, and `CHROMA_PORT` as env vars
 flask --app searcher
 ```
 
 ## Deployment
 
-1. Update `env` in `kube/app.yaml`
-2. Update ingress/route in `kube/app.yaml` to match your specific environment
-3. Deploy using a kubernetes environment
+```shell
+# update `env` in `kube/app.yaml`
+oc apply -k ./kube
+```
 
 
 ## Links
