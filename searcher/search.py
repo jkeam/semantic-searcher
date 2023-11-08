@@ -4,7 +4,7 @@ from flask import (
 from datetime import datetime
 from uuid import uuid4
 from werkzeug.exceptions import abort
-from searcher.models import Searcher
+from searcher.models import Searcher, TrainingError
 from os import getenv, environ
 
 from searcher.auth import login_required
@@ -97,8 +97,11 @@ def delete(id):
 @bp.route('/train', methods=('POST',))
 @login_required
 def train():
-    searcher.train(post_id_to_post.values())
-    flash('Trained!')
+    try:
+        searcher.train(post_id_to_post.values())
+        flash('Trained!')
+    except TrainingError as training_error:
+        flash(training_error.message)
     return redirect(url_for('search.index'))
 
 

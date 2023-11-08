@@ -10,6 +10,13 @@ from shutil import rmtree
 from chromadb import HttpClient
 from chromadb.api.models.Collection import Collection
 from chromadb.utils.embedding_functions import OpenAIEmbeddingFunction
+from openai.error import AuthenticationError, RateLimitError
+from logging import getLogger
+
+class TrainingError(Exception):
+    def __init__(self, message) -> None:
+        self.message = message
+        super().__init__(self.message)
 
 class Searcher:
     def __init__(self, openai_api_key:str, open_ai_model_name:str, chroma_host:str, chroma_port:int):
@@ -22,6 +29,7 @@ class Searcher:
             api_key=openai_api_key,
             model_name=open_ai_model_name
         )
+        self._logger = getLogger(__name__)
 
 
     def train(self, posts):
@@ -43,7 +51,14 @@ class Searcher:
         self._dbclient.delete_collection(name=self._collection_name)
 
         collection = self._dbclient.create_collection(name=self._collection_name, embedding_function=self._embedding_function)
-        collection.add(documents=documents, ids=list(map(lambda num: str(num), range(len(documents)))))
+        try:
+            collection.add(documents=documents, ids=list(map(lambda num: str(num), range(len(documents)))))
+        except AuthenticationError as e:
+            self._logger.error(e)
+            raise TrainingError('Invalid OPENAI Key')
+        except RateLimitError as e:
+            self._logger.error(e)
+            raise TrainingError('Rate Limit Error while using OPENAI Key')
         return collection
 
 
