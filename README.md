@@ -1,10 +1,12 @@
 # Semantic Searcher
 
-## Prerequisite
+## Local Setup
+
+### Prerequisite
 
 1. Python 3.10
 
-## Setup
+### Setup
 
 1. Install deps
 
@@ -20,13 +22,13 @@
     python -c 'import secrets; print(secrets.token_hex())'
     ```
 
-## Running
+### Running
 
 1. Start external ChromaDB
 
     ```shell
-    podman build -t quay.io/foo/chroma -f ./chroma/ChromaContainerfile .
-    podman run --rm --name chroma -p 8000:8000 -t quay.io/foo/chroma
+    podman build -t chroma -f ./chroma/ChromaContainerfile .
+    podman run --rm --name chroma -p 8000:8000 -t chroma
     ```
 
 2. Start App
@@ -44,10 +46,32 @@
 
 ## Deployment
 
-```shell
-# update `env` in `kube/app.yaml`
-oc apply -k ./kube
-```
+1. Update `./kube/env.txt`, really only `OPENAI_API_KEY` MUST be updated
+
+2. Create an OpenShift project/namespace.  Project name is up to you, but you will have change the `kustomization.yaml` if you use a different namespace than `semantic-searcher`.
+
+    ```shell
+    oc new-project semantic-searcher
+    ```
+
+3. Optionally, if you changed the project name, then update the following in `kustomization.yaml`:
+
+    ```yaml
+    namespace: <replace with new project name>
+    ...
+    configMapGenerator:
+    - name: chromaprops
+      literals:
+      - CHROMA_HOST=semantic-searcher-chroma.<replace with new project name>.svc.cluster.local
+    ```
+
+4.  Run everything
+
+    ```shell
+    oc apply -k ./kube
+    ```
+
+5.  Open the URL for the `semantic-searcher-app` and log in with username `admin` and `APP_PASSWORD` password that you set in `env.txt`
 
 
 ## Links

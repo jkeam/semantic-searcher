@@ -1,7 +1,23 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
+namespace: semantic-searcher
+
+secretGenerator:
+- name: envsecrets
+  envs:
+  - env.txt
+
+configMapGenerator:
+- name: chromaprops
+  literals:
+  - CHROMA_HOST=semantic-searcher-chroma.semantic-searcher.svc.cluster.local
+  - CHROMA_PORT=8000
+  - OPENAI_MODEL_NAME=text-embedding-ada-002
+
+commonLabels:
+  app: semantic-searcher
+
 resources:
-  - namespace.yaml
   - chroma.yaml
   - app.yaml

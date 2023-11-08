@@ -33,17 +33,35 @@ spec:
           name: semantic-searcher-app
           env:
           - name: OPENAI_API_KEY
-            value: "sk-replaceme"
+            valueFrom:
+              secretKeyRef:
+                name: envsecrets
+                key: OPENAI_API_KEY
           - name: APP_PASSWORD
-            value: "replaceme"
+            valueFrom:
+              secretKeyRef:
+                name: envsecrets
+                key: APP_PASSWORD
           - name: FLASK_SECRET_KEY
-            value: "replacemealso"
-          - name: OPENAI_MODEL_NAME
-            value: "text-embedding-ada-002"
+            valueFrom:
+              secretKeyRef:
+                name: envsecrets
+                key: FLASK_SECRET_KEY
           - name: CHROMA_HOST
-            value: "semantic-searcher-chroma.semantic-searcher.svc.cluster.local"
+            valueFrom:
+              configMapKeyRef:
+                name: chromaprops
+                key: CHROMA_HOST
           - name: CHROMA_PORT
-            value: "8000"
+            valueFrom:
+              configMapKeyRef:
+                name: chromaprops
+                key: CHROMA_PORT
+          - name: OPENAI_MODEL_NAME
+            valueFrom:
+              configMapKeyRef:
+                name: chromaprops
+                key: OPENAI_MODEL_NAME
           ports:
           - containerPort: 5000
             name: theport
