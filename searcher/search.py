@@ -13,7 +13,7 @@ bp = Blueprint('search', __name__)
 
 environ['TOKENIZERS_PARALLELISM'] = 'false'
 
-searcher = Searcher(getenv('OPENAI_API_KEY'), getenv('OPENAI_MODEL_NAME'), getenv('CHROMA_HOST', 'localhost'), int(getenv('CHROMA_PORT', '8000')))
+searcher = Searcher(getenv('OPENAI_API_KEY'), getenv('OPENAI_MODEL_NAME'), getenv('CHROMA_HOST', 'localhost'), getenv('CHROMA_PORT', '8000'))
 
 @bp.route('/')
 def index():

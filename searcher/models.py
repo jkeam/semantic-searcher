@@ -29,7 +29,7 @@ class TrainingError(Exception):
         super().__init__(self.message)
 
 class Searcher:
-    def __init__(self, openai_api_key:str, open_ai_model_name:str, chroma_host:str, chroma_port:int):
+    def __init__(self, openai_api_key:str, open_ai_model_name:str, chroma_host:str, chroma_port:str):
         openai:OpenAI = OpenAI(temperature=0, openai_api_key=openai_api_key)
         self._chain:BaseCombineDocumentsChain = load_qa_chain(openai, chain_type='stuff')
         self._dbclient = HttpClient(host=chroma_host, port=chroma_port)
