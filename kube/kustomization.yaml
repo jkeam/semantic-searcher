@@ -14,8 +14,6 @@ configMapGenerator:
   - CHROMA_HOST=semantic-searcher-chroma.semantic-searcher.svc.cluster.local
   - CHROMA_PORT=8000
   - OPENAI_MODEL_NAME=text-embedding-ada-002
-
-configMapGenerator:
 - name: dbprops
   literals:
   - DB_HOST=semantic-searcher-database.semantic-searcher.svc.cluster.local
