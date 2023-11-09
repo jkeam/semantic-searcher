@@ -27,6 +27,10 @@ def create_app(test_config=None):
     def hello():
         return 'Hello, World!'
 
+    @app.route('/healthz')
+    def healthz():
+        return 'Alive'
+
     from . import auth
     app.register_blueprint(auth.bp)
 
