@@ -1,19 +1,20 @@
 {% extends 'base.html' %}
 {% block title %}Query {% endblock %}
 {% block header %}
-  <header>
-    <section class="hero">
-      <div class="hero-body">
-        <p class="title">
-          Query
-        </p>
-      </div>
-    </section>
-  </header>
+<header>
+  <section class="hero">
+    <div class="hero-body">
+      <p class="title">
+        Query
+      </p>
+    </div>
+  </section>
+</header>
 {% endblock %}
 
 {% block content %}
-  <form method="post">
+<div data-controller="query" data-query-loading-class="is-loading">
+  <form method="post" data-query-target="form">
     <div class="field">
       <label class="label">Ask your question</label>
       <div class="control">
@@ -23,10 +24,10 @@
 
     <div class="field is-grouped">
       <div class="control">
-        <button type="submit" class="button is-link">Ask</button>
+        <button data-action="query#submit" type="submit" class="button is-link">Ask</button>
       </div>
       <div class="control">
-        <a href="{{ url_for('search.index') }}" class="button is-link is-light">Cancel</a>
+        <a data-query-target="cancelbtn" href="{{ url_for('search.index') }}" class="button is-link is-light">Cancel</a>
       </div>
     </div>
   </form>
@@ -38,4 +39,5 @@
     {{ answer }}
   </p>
   {% endif %}
+</div>
 {% endblock %}
