@@ -58,6 +58,31 @@ spec:
               configMapKeyRef:
                 name: chromaprops
                 key: CHROMA_PORT
+          - name: DB_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: dbprops
+                key: DB_HOST
+          - name: DB_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: dbprops
+                key: DB_PORT
+          - name: DB_USER
+            valueFrom:
+              configMapKeyRef:
+                name: envsecrets
+                key: DB_USER
+          - name: DB_PASSWORD
+            valueFrom:
+              configMapKeyRef:
+                name: envsecrets
+                key: DB_PASSWORD
+          - name: DB_DATABASE
+            valueFrom:
+              configMapKeyRef:
+                name: envsecrets
+                key: DB_DATABASE
           - name: OPENAI_MODEL_NAME
             valueFrom:
               configMapKeyRef:

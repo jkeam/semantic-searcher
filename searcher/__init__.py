@@ -1,7 +1,8 @@
-import os
+from os import makedirs, getenv
 
 from flask import Flask
 import searcher.models
+from searcher.extensions import db
 
 def create_app(test_config=None):
     # create and configure the app
@@ -16,9 +17,16 @@ def create_app(test_config=None):
         # load the test config if passed in
         app.config.from_mapping(test_config)
 
+    # database
+    app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://{getenv('DB_USER')}:{getenv('DB_PASSWORD')}@{getenv('DB_HOST')}:{getenv('DB_PORT', '5432')}/{getenv('DB_DATABASE')}"
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    db.init_app(app)
+    with app.app_context():
+        db.create_all()
+
     # ensure the instance folder exists
     try:
-        os.makedirs(app.instance_path)
+        makedirs(app.instance_path)
     except OSError:
         pass
 

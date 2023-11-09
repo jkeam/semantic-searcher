@@ -12,6 +12,19 @@ from chromadb.api.models.Collection import Collection
 from chromadb.utils.embedding_functions import OpenAIEmbeddingFunction
 from openai.error import AuthenticationError, RateLimitError
 from logging import getLogger
+from searcher.extensions import db
+from datetime import datetime
+
+class Fact(db.Model):
+    id = db.Column(db.String(40), primary_key=True)
+    title = db.Column(db.String(256))
+    body = db.Column(db.Text)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow)
+    author_id = db.Column(db.Integer)
+
+    def __repr__(self):
+        return f'<Fact "{self.title}">'
 
 class TrainingError(Exception):
     def __init__(self, message) -> None:
@@ -32,11 +45,11 @@ class Searcher:
         self._logger = getLogger(__name__)
 
 
-    def train(self, posts):
+    def train(self, values):
         """
         Train the model
         """
-        doc_str = "\n\n".join(list(map(lambda p: p['body'], posts)))
+        doc_str = "\n\n".join(values)
         self._collection = self._generate_index(doc_str)
 
 

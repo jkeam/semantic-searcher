@@ -4,14 +4,12 @@ from flask import (
 from datetime import datetime
 from uuid import uuid4
 from werkzeug.exceptions import abort
-from searcher.models import Searcher, TrainingError
+from searcher.models import Searcher, TrainingError, Fact
 from os import getenv, environ
-
 from searcher.auth import login_required
+from searcher.extensions import db
 
 bp = Blueprint('search', __name__)
-
-post_id_to_post = {}
 
 environ['TOKENIZERS_PARALLELISM'] = 'false'
 
@@ -21,7 +19,7 @@ searcher = Searcher(getenv('OPENAI_API_KEY'), getenv('OPENAI_MODEL_NAME'), geten
 def index():
     if g.user is None or g.user['id'] is None:
         return redirect(url_for('auth.login'))
-    posts = post_id_to_post.values()
+    posts = Fact.query.all()
     return render_template('search/index.html', posts=posts)
 
 
@@ -41,15 +39,16 @@ def create():
         else:
             now = datetime.now()
             id = str(uuid4())
-            post = { 'id': id, 'title': title, 'body': body, 'author_id': g.user['id'], 'created_at': now, 'updated_at': now }
-            post_id_to_post[id] = post
+            post = Fact(id=id, title=title, body=body, author_id=g.user['id'], created_at=now, updated_at=now)
+            db.session.add(post)
+            db.session.commit()
             return redirect(url_for('search.index'))
 
     return render_template('search/create.html')
 
 
 def get_post(id, check_author=False):
-    post = post_id_to_post.get(id)
+    post = Fact.query.get(id)
 
     if post is None:
         abort(404, f"Post id {id} doesn't exist.")
@@ -76,9 +75,12 @@ def update(id):
         if error is not None:
             flash(error)
         else:
-            now = datetime.now()
-            new_post = { 'id': id, 'title': title, 'body': body, 'author_id': g.user['id'], 'created_at': post['created_at'], 'updated_at': now }
-            post_id_to_post[id] = new_post
+            post = Fact.query.get(id)
+            if post is not None:
+                post.title = title
+                post.body = body
+                post.updated_at = datetime.now()
+                db.session.commit()
             return redirect(url_for('search.index'))
 
     return render_template('search/update.html', post=post)
@@ -87,10 +89,10 @@ def update(id):
 @bp.route('/<id>/delete', methods=('POST',))
 @login_required
 def delete(id):
-    post = post_id_to_post.get(id)
+    post = Fact.query.get(id)
     if post is not None:
-        del post_id_to_post[id]
-
+        db.session.delete(post)
+        db.session.commit()
     return redirect(url_for('search.index'))
 
 
@@ -98,7 +100,7 @@ def delete(id):
 @login_required
 def train():
     try:
-        searcher.train(post_id_to_post.values())
+        searcher.train(list(map(lambda p: p.body, Fact.query.all())))
         flash('Trained!')
     except TrainingError as training_error:
         flash(training_error.message)

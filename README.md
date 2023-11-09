@@ -5,6 +5,7 @@
 ### Prerequisite
 
 1. Python 3.10
+2. PostgreSQL 15
 
 ### Setup
 
@@ -15,7 +16,7 @@
     pip install -r requirements.txt
     ```
 
-2. Set `OPENAI_API_KEY` and `APP_PASSWORD` and `FLASK_SECRET_KEY` and `CHROMA_HOST`, and `CHROMA_PORT`, and optionally `PORT` and `OPENAPI_MODEL_NAME` and `DB_USER` and `DB_PASSWORD` and `DB_DATABASE` env vars
+2. Set `OPENAI_API_KEY` and `APP_PASSWORD` and `FLASK_SECRET_KEY` and `CHROMA_HOST`, and `CHROMA_PORT`, and optionally `PORT` and `OPENAPI_MODEL_NAME` and `DB_HOST` and `DB_PORT` and `DB_USER` and `DB_PASSWORD` and `DB_DATABASE` env vars
 
     ```shell
     # use this for your FLASK_SECRET_KEY
@@ -29,6 +30,7 @@
     ```shell
     podman build -t chroma -f ./chroma/ChromaContainerfile .
     podman run --rm --name chroma -p 8000:8000 -t chroma
+    podman run --rm -d --name postgresql_database -e POSTGRESQL_USER=semantic -e POSTGRESQL_PASSWORD=semanticsearcher1234 -e POSTGRESQL_DATABASE=semantic -p 5432:5432 registry.redhat.io/rhel9/postgresql-15@sha256:410041a14a3064d020bf2ec8572c2d62cdcd824550cb8d67cbd072743d0123c0
     ```
 
 2. Start App
@@ -40,6 +42,11 @@
     export CHROMA_HOST=localhost
     export CHROMA_PORT=8000
     export OPENAPI_MODEL_NAME=text-embedding-ada-002
+    export DB_HOST=localhost
+    export DB_PORT=5432
+    export DB_USER=semantic
+    export DB_PASSWORD=semanticsearcher1234
+    export DB_DATABASE=semantic
     export PORT=5000
     flask --app searcher
     ```
