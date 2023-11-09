@@ -70,17 +70,17 @@ spec:
                 key: DB_PORT
           - name: DB_USER
             valueFrom:
-              configMapKeyRef:
+              secretKeyRef:
                 name: envsecrets
                 key: DB_USER
           - name: DB_PASSWORD
             valueFrom:
-              configMapKeyRef:
+              secretKeyRef:
                 name: envsecrets
                 key: DB_PASSWORD
           - name: DB_DATABASE
             valueFrom:
-              configMapKeyRef:
+              secretKeyRef:
                 name: envsecrets
                 key: DB_DATABASE
           - name: OPENAI_MODEL_NAME
