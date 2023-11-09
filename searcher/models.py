@@ -36,12 +36,12 @@ class Searcher:
         openai:OpenAI = OpenAI(temperature=0, openai_api_key=openai_api_key)
         self._chain:BaseCombineDocumentsChain = load_qa_chain(openai, chain_type='stuff')
         self._dbclient = HttpClient(host=chroma_host, port=chroma_port)
-        self._collection:Collection|None = None
         self._collection_name = "chroma"
         self._embedding_function = OpenAIEmbeddingFunction(
             api_key=openai_api_key,
             model_name=open_ai_model_name
         )
+        self._collection = self._dbclient.get_or_create_collection(name=self._collection_name)
         self._logger = getLogger(__name__)
 
 
@@ -89,7 +89,4 @@ class Searcher:
         """
         Ask the model a query
         """
-        if self._collection is None:
-            return 'You must train the model first. Go back to the content page and train.'
-        else:
-            return self._answer_question(query, self._collection, self._chain)
+        return self._answer_question(query, self._collection, self._chain)
