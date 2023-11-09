@@ -1,23 +1,24 @@
 {% extends 'base.html' %}
 {% block title %}Content{% endblock %}
 {% block header %}
-  {% if g.user %}
-    <header>
-      <section class="hero">
-        <div class="hero-body">
-          <p class="title">
-            Content
-          </p>
-          <p class="subtitle">
-            Listing
-          </p>
-        </div>
-      </section>
-    </header>
-  {% endif %}
+{% if g.user %}
+  <header>
+    <section class="hero">
+      <div class="hero-body">
+        <p class="title">
+          Content
+        </p>
+        <p class="subtitle">
+          Listing
+        </p>
+      </div>
+    </section>
+  </header>
+{% endif %}
 {% endblock %}
 
 {% block content %}
+<div data-controller="search" data-search-loading-class="is-loading">
   <div class="level-right">
     <a class="button is-light" href="{{ url_for('search.create') }}">New</a>
   </div>
@@ -26,11 +27,18 @@
       <div class="card-content">
         <div class="media">
           <div class="media-content">
-            <p class="title is-4">{{ post['title'] }}</p>
+            <p class="title is-4">
+              {% if g.user['id'] == post['author_id'] %}
+                <a class="action" href="{{ url_for('search.update', id=post['id']) }}">{{ post['title'] }}
+                  <span class="icon is-small">
+                    <i class="fa fa-pencil fa-2xs"></i>
+                  </span>
+                </a>
+              {% else %}
+                {{ post['title'] }}
+              {% endif %}
+            </p>
             <p class="subtitle is-6">
-            {% if g.user['id'] == post['author_id'] %}
-              <a class="action" href="{{ url_for('search.update', id=post['id']) }}">Edit</a>
-            {% endif %}
             </p>
           </div>
         </div>
@@ -46,12 +54,28 @@
   {% endfor %}
 
   {% if posts|length > 0 %}
-  <form method="post" action="{{ url_for('search.train') }}">
+  <form method="post" data-search-target="form" action="{{ url_for('search.train') }}">
     {% if posts|length == 1 %}
-      <button class="button is-info" type="submit">Train</button>
+      <button class="button is-info" type="submit" data-action="search#submit">Train</button>
     {% else %}
-      <button class="button is-info" type="submit">Train All</button>
+      <button class="button is-info" type="submit" data-action=search#submit>Train All</button>
     {% endif %}
   </form>
   {% endif %}
+</div>
+
+<script type="module">
+  import { Application, Controller } from "https://unpkg.com/@hotwired/stimulus/dist/stimulus.js";
+  window.Stimulus = Application.start();
+  Stimulus.register("search", class extends Controller {
+    static classes = [ "loading" ];
+    static targets = [ "form", "trainbtn" ];
+
+    submit(e) {
+      e.preventDefault();
+      e.target.classList.add(this.loadingClass);
+      this.formTarget.submit();
+    }
+  })
+</script>
 {% endblock %}

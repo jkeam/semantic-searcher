@@ -1,22 +1,23 @@
 {% extends 'base.html' %}
 {% block title %}Edit "{{ post['title'] }}"{% endblock %}
 {% block header %}
-  <header>
-    <section class="hero">
-      <div class="hero-body">
-        <p class="title">
-          Content
-        </p>
-        <p class="subtitle">
-          Edit
-        </p>
-      </div>
-    </section>
-  </header>
+<header>
+  <section class="hero">
+    <div class="hero-body">
+      <p class="title">
+        Content
+      </p>
+      <p class="subtitle">
+        Edit
+      </p>
+    </div>
+  </section>
+</header>
 {% endblock %}
 
 {% block content %}
-  <form method="post">
+<div data-controller="update" data-update-loading-class="is-loading">
+  <form method="post" data-update-target="form">
     <div class="field">
       <label class="label">Title</label>
       <div class="control">
@@ -33,10 +34,10 @@
 
     <div class="field is-grouped">
       <div class="control">
-        <button type="submit" class="button is-link">Submit</button>
+        <button data-action="update#submit" type="submit" class="button is-link">Submit</button>
       </div>
       <div class="control">
-        <a href="{{ url_for('search.index') }}" class="button is-link is-light">Cancel</a>
+        <a data-update-target="cancelbtn" href="{{ url_for('search.index') }}" class="button is-link is-light">Cancel</a>
       </div>
     </div>
   </form>
@@ -46,4 +47,22 @@
       <button class="button is-danger" type="submit" onclick="return confirm('Are you sure?');">Delete</button>
     </div>
   </form>
+</div>
+
+<script type="module">
+  import { Application, Controller } from "https://unpkg.com/@hotwired/stimulus/dist/stimulus.js";
+  window.Stimulus = Application.start();
+  Stimulus.register("update", class extends Controller {
+    static classes = [ "loading" ];
+    static targets = [ "form", "cancelbtn" ];
+
+    submit(e) {
+      e.preventDefault();
+      e.target.classList.add(this.loadingClass);
+      this.cancelbtnTarget.setAttribute("disabled", "disabled");
+      this.cancelbtnTarget.setAttribute("href", "#");
+      this.formTarget.submit();
+    }
+  })
+</script>
 {% endblock %}

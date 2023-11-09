@@ -73,21 +73,5 @@
   </footer>
 
   <script type="text/javascript" src="{{ url_for('static', filename='script.js') }}"></script>
-  <script type="module">
-    import { Application, Controller } from "https://unpkg.com/@hotwired/stimulus/dist/stimulus.js";
-    window.Stimulus = Application.start();
-    Stimulus.register("query", class extends Controller {
-      static classes = [ "loading" ];
-      static targets = [ "form", "cancelbtn" ];
-
-      submit(e) {
-        e.preventDefault();
-        e.target.classList.add(this.loadingClass);
-        this.cancelbtnTarget.setAttribute("disabled", "disabled");
-        this.cancelbtnTarget.setAttribute("href", "#");
-        this.formTarget.submit();
-      }
-    })
-  </script>
 </body>
 </html>
