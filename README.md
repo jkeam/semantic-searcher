@@ -15,7 +15,7 @@
     pip install -r requirements.txt
     ```
 
-2. Set `OPENAI_API_KEY` and `APP_PASSWORD` and `FLASK_SECRET_KEY` and `CHROMA_HOST`, and `CHROMA_PORT`, and optionally `PORT` and `OPENAPI_MODEL_NAME` env vars
+2. Set `OPENAI_API_KEY` and `APP_PASSWORD` and `FLASK_SECRET_KEY` and `CHROMA_HOST`, and `CHROMA_PORT`, and optionally `PORT` and `OPENAPI_MODEL_NAME` and `DB_USER` and `DB_PASSWORD` and `DB_DATABASE` env vars
 
     ```shell
     # use this for your FLASK_SECRET_KEY

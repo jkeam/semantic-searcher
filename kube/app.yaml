@@ -15,6 +15,7 @@ metadata:
   annotations:
     app.openshift.io/vcs-uri: "https://github.com/jkeam/semantic-searcher.git"
     app.openshift.io/vcs-ref: "main"
+    app.openshift.io/connects-to: '[{"apiVersion":"apps/v1","kind":"Deployment","name":"semantic-searcher-database"},{"apiVersion":"apps/v1","kind":"Deployment","name":"semantic-searcher-chroma"}]'
 spec:
   replicas: 1
   selector:

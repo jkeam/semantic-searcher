@@ -20,4 +20,5 @@ commonLabels:
 
 resources:
   - chroma.yaml
+  - database.yaml
   - app.yaml
