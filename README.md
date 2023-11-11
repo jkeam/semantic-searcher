@@ -70,6 +70,10 @@
     - name: chromaprops
       literals:
       - CHROMA_HOST=semantic-searcher-chroma.<replace with new project name>.svc.cluster.local
+    ...
+    - name: dbprops
+      literals:
+      - DB_HOST=semantic-searcher-database.<replace with your new project name>.svc.cluster.local
     ```
 
 4.  Run everything
